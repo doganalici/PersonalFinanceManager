@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Business\CategoryManager.cs" />
+    <Compile Include="Business\TransactionManager.cs" />
     <Compile Include="Business\UserManager.cs" />
     <Compile Include="Data\DbConnection.cs" />
     <Compile Include="Program.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PersonalFinanceManager.Business;
 
 namespace PersonalFinanceManager
 {
@@ -10,7 +11,9 @@ namespace PersonalFinanceManager
     {
         static void Main(string[] args)
         {
+            UserManager userManager = new UserManager();
             Console.WriteLine(" **** KİŞİSAL FİNANS YÖNETİCİ UYGULAMASI ****\n");
+            
 
             bool state = true;
             while (state)
@@ -59,7 +62,8 @@ namespace PersonalFinanceManager
                     case 1:
                         Console.Clear();
                         Console.WriteLine("--- KULLANICI EKLE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        userManager.AddUser();
+
                         Clear();
                         break;
 

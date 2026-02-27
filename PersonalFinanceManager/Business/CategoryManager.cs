@@ -158,14 +158,14 @@ namespace PersonalFinanceManager.Business
             {
                 string queryUpdate = "UPDATE Categories SET CategoryName=@newName,Type=@newType WHERE Id=@id";
                 SqlCommand command = new SqlCommand(queryUpdate, connection);
-                command.Parameters.Add("@newName",SqlDbType.VarChar,70).Value=newName;
-                command.Parameters.Add("@newType", SqlDbType.VarChar,50).Value= newType;
+                command.Parameters.Add("@newName", SqlDbType.VarChar, 70).Value = newName;
+                command.Parameters.Add("@newType", SqlDbType.VarChar, 50).Value = newType;
                 command.Parameters.Add("@id", SqlDbType.Int).Value = id;
 
                 try
                 {
                     connection.Open();
-                    int result=command.ExecuteNonQuery();
+                    int result = command.ExecuteNonQuery();
                     if (result > 0)
                     {
                         Console.WriteLine("\n[BİLGİ] Kategori başarıyla güncellendi");

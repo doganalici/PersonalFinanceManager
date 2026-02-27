@@ -16,11 +16,11 @@ namespace PersonalFinanceManager.Business
         private DbConnection db = new DbConnection();
         public void AddUser()
         {
-            Console.WriteLine("Kullanıcı adını giriniz : ");
+            Console.Write("Kullanıcı adını giriniz : ");
             string name = Console.ReadLine()?.Trim();
             if (string.IsNullOrWhiteSpace(name))
             {
-                Console.WriteLine("Kullanıcı adı boş olamaz!");
+                Console.Write("Kullanıcı adı boş olamaz!");
                 return;
             }
 

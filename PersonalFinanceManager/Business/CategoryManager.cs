@@ -15,7 +15,7 @@ namespace PersonalFinanceManager.Business
 
         public void AddCategory()
         {
-            Console.WriteLine("Kategori adını giriniz :");
+            Console.Write("Kategori adını giriniz : ");
             string name = Console.ReadLine()?.Trim();
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -23,14 +23,15 @@ namespace PersonalFinanceManager.Business
                 return;
             }
 
-            Console.WriteLine("Kategori tipini giriniz :");
-            string type = Console.ReadLine()?.Trim();
-            if (string.IsNullOrWhiteSpace(type))
+            Console.WriteLine("\n1 - Gelir");
+            Console.WriteLine("2 - Gider");
+            Console.Write("Kategori türünü seçiniz : ");
+            int typeOption;
+            while (!int.TryParse(Console.ReadLine(), out typeOption) || (typeOption != 1 && typeOption != 2))
             {
-                Console.WriteLine("Kategori tipi boş olamaz!");
-                return;
+                Console.Write("Lütfen 1 veya 2 giriniz: ");
             }
-
+            string type = typeOption == 1 ? "Income" : "Expense";
 
             using (SqlConnection connection = db.GetConnection())
             {
@@ -75,6 +76,8 @@ namespace PersonalFinanceManager.Business
                         while (read.Read())
                         {
                             hasData = true;
+                            string type = read["Type"].ToString() == "Income" ? "Gelir" : "Gider";
+
                             Console.WriteLine($"Id : {read["Id"]}\n" +
                                 $"Kategori Adı : {read["CategoryName"]}\n" +
                                 $"Tipi : {read["Type"]}");
@@ -131,6 +134,8 @@ namespace PersonalFinanceManager.Business
 
         public void UpdateCategory()
         {
+            ListCategory();
+
             Console.Write("Güncellemek istediğiniz kategorinin Id numarasını giriniz : ");
             int id;
             while (!int.TryParse(Console.ReadLine(), out id))
@@ -146,13 +151,17 @@ namespace PersonalFinanceManager.Business
                 return;
             }
 
-            Console.Write("Güncel kategori tipini giriniz : ");
-            string newType = Console.ReadLine()?.Trim();
-            if (string.IsNullOrEmpty(newType))
+            Console.WriteLine("\nGüncel kategori tipini seçiniz:");
+            Console.WriteLine("1 - Gelir");
+            Console.WriteLine("2 - Gider");
+
+            int typeOption;
+            while (!int.TryParse(Console.ReadLine(), out typeOption) || (typeOption != 1 && typeOption != 2))
             {
-                Console.WriteLine("Kategori tipi boş olamaz!");
-                return;
+                Console.Write("Lütfen 1 veya 2 giriniz: ");
             }
+
+            string newType = typeOption == 1 ? "Income" : "Expense";
 
             using (SqlConnection connection = db.GetConnection())
             {

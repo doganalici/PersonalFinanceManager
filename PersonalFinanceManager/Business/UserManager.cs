@@ -131,24 +131,38 @@ namespace PersonalFinanceManager.Business
             {
                 Console.Write("\nListede bulunan bir Id numarası giriniz! ");
             }
-            Console.Write("Güncel kullanıcı adını giriniz : ");
-            string newName = Console.ReadLine()?.Trim();
-            if (string.IsNullOrWhiteSpace(newName))
-            {
-                Console.WriteLine("Kullanıcı adı boş olamaz!");
-                return;
-            }
 
             using (SqlConnection connection = db.GetConnection())
             {
-                string queryUpdate = "UPDATE Users SET Name=@newName WHERE Id=@id";
-                SqlCommand command = new SqlCommand(queryUpdate, connection);
-                command.Parameters.Add("@newName", SqlDbType.VarChar, 40).Value = newName;
-                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                // Önce kullanıcının var olup olmadığını kontrol ediyoruz
+                string queryCheck = "SELECT COUNT(*) FROM Users WHERE Id=@id";
+                SqlCommand checkCommand = new SqlCommand(queryCheck, connection);
+                checkCommand.Parameters.Add("@id", SqlDbType.Int).Value = id;
 
                 try
                 {
                     connection.Open();
+                    int count = (int)checkCommand.ExecuteScalar();
+                    if (count == 0)
+                    {
+                        Console.WriteLine("\nSeçtiğiniz Id numarasına sahip kullanıcı bulunamadı!");
+                        return; // kullanıcı yoksa metoddan çıkıyoruz
+                    }
+
+                    // Kullanıcı varsa güncelleme kısmına geçiyoruz
+                    Console.Write("Güncel kullanıcı adını giriniz : ");
+                    string newName = Console.ReadLine()?.Trim();
+                    if (string.IsNullOrWhiteSpace(newName))
+                    {
+                        Console.WriteLine("Kullanıcı adı boş olamaz!");
+                        return;
+                    }
+
+                    string queryUpdate = "UPDATE Users SET Name=@newName WHERE Id=@id";
+                    SqlCommand command = new SqlCommand(queryUpdate, connection);
+                    command.Parameters.Add("@newName", SqlDbType.VarChar, 40).Value = newName;
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+
                     int result = command.ExecuteNonQuery();
                     if (result > 0)
                     {
@@ -156,6 +170,7 @@ namespace PersonalFinanceManager.Business
                     }
                     else
                     {
+                        // Teorik olarak buraya girmez, çünkü kullanıcı var
                         Console.WriteLine("\nKullanıcı güncellenemedi!");
                     }
                 }

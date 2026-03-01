@@ -11,9 +11,12 @@ namespace PersonalFinanceManager
     {
         static void Main(string[] args)
         {
+            CategoryManager categoryManager = new CategoryManager();
+            TransactionManager transactionManager = new TransactionManager();
             UserManager userManager = new UserManager();
+
             Console.WriteLine(" **** KİŞİSAL FİNANS YÖNETİCİ UYGULAMASI ****\n");
-            
+
 
             bool state = true;
             while (state)
@@ -30,24 +33,17 @@ namespace PersonalFinanceManager
                 Console.WriteLine("7 - Kategori Sil");
                 Console.WriteLine("8 - Kategori Güncelle");
 
-                Console.WriteLine("\nGelir Menüsü");
-                Console.WriteLine("9 - Gelir Ekle");
-                Console.WriteLine("10 - Gelirleri Listele");
-                Console.WriteLine("11 - Gelir Sil");
-                Console.WriteLine("12 - Gelir Güncelle");
-
-                Console.WriteLine("\nGider Menüsü");
-                Console.WriteLine("13 - Gider Ekle");
-                Console.WriteLine("14 - Gider Listele");
-                Console.WriteLine("15 - Gider Sil");
-                Console.WriteLine("16 - Gider Güncelle");
+                Console.WriteLine("\nİşlem Menüsü");
+                Console.WriteLine("9 - İşlem Ekle");
+                Console.WriteLine("10 - İşlem Listele");
+                Console.WriteLine("11 - İşlem Sil");
+                Console.WriteLine("12 - İşlem Güncelle");
 
                 Console.WriteLine("\nDiğer İşlemler");
-                Console.WriteLine("17 - İşlemleri Listele");
-                Console.WriteLine("18 - Aylık Rapor");
-                Console.WriteLine("19 - En Çok Harcanan Kategori");
+                Console.WriteLine("13 - Aylık Rapor");
+                Console.WriteLine("14 - En Çok Harcanan Kategori");
 
-                Console.WriteLine("\n20 - Çıkış");
+                Console.WriteLine("\n15 - Çıkış");
 
                 Console.Write("\nSeçiminiz : ");
                 int option;
@@ -63,137 +59,101 @@ namespace PersonalFinanceManager
                         Console.Clear();
                         Console.WriteLine("--- KULLANICI EKLE ---\n");
                         userManager.AddUser();
-
                         Clear();
                         break;
 
                     case 2:
                         Console.Clear();
                         Console.WriteLine("--- KULLANICI LİSTESİ ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        userManager.ListUser();
                         Clear();
                         break;
 
                     case 3:
                         Console.Clear();
-                        Console.WriteLine("--- KULLANICI GÜNCELLE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        Console.WriteLine("--- KULLANICI SİL ---\n");
+                        userManager.DeleteUser();
                         Clear();
                         break;
 
                     case 4:
                         Console.Clear();
-                        Console.WriteLine("--- KULLANICI SİL ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        Console.WriteLine("--- KULLANICI GÜNCELLE ---\n");
+                        userManager.UpdateUser();
                         Clear();
                         break;
 
                     case 5:
                         Console.Clear();
                         Console.WriteLine("--- KATEGORİ EKLE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        categoryManager.AddCategory();
                         Clear();
                         break;
 
                     case 6:
                         Console.Clear();
                         Console.WriteLine("--- KATEGORİ LİSTESİ ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        categoryManager.ListCategory();
                         Clear();
                         break;
 
                     case 7:
                         Console.Clear();
                         Console.WriteLine("--- KATEGORİ SİL ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        categoryManager.DeleteCategory();
                         Clear();
                         break;
 
                     case 8:
                         Console.Clear();
                         Console.WriteLine("--- KATEGORİ GÜNCELLE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        categoryManager.ListCategory();
                         Clear();
                         break;
 
                     case 9:
                         Console.Clear();
-                        Console.WriteLine("--- GELİR EKLE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        Console.WriteLine("--- İŞLEM EKLE ---\n");
+                        transactionManager.AddTransaction();
                         Clear();
                         break;
 
                     case 10:
                         Console.Clear();
-                        Console.WriteLine("--- GELİR LİSTELE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        Console.WriteLine("--- İŞLEM LİSTELE ---\n");
+                        transactionManager.ListTransaction();
                         Clear();
                         break;
 
                     case 11:
                         Console.Clear();
-                        Console.WriteLine("--- GELİR SİL ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        Console.WriteLine("--- İŞLEM SİL ---\n");
+                        transactionManager.DeleteTransaction();
                         Clear();
                         break;
 
                     case 12:
                         Console.Clear();
-                        Console.WriteLine("--- GELİR GÜNCELLE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        Console.WriteLine("--- İŞLEM GÜNCELLE ---\n");
+                        transactionManager.UpdateTransaction();
                         Clear();
                         break;
 
                     case 13:
-                        Console.Clear();
-                        Console.WriteLine("--- GİDER EKLE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
-                        Clear();
-                        break;
-
-                    case 14:
-                        Console.Clear();
-                        Console.WriteLine("--- GİDER LİSTELE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
-                        Clear();
-                        break;
-
-                    case 15:
-                        Console.Clear();
-                        Console.WriteLine("--- GİDER SİL ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
-                        Clear();
-                        break;
-
-                    case 16:
-                        Console.Clear();
-                        Console.WriteLine("--- GİDER GÜNCELLE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
-                        Clear();
-                        break;
-
-                    case 17:
-                        Console.Clear();
-                        Console.WriteLine("--- İŞLEMLERİ LİSTELE ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
-                        Clear();
-                        break;
-
-                    case 18:
                         Console.Clear();
                         Console.WriteLine("--- AYLIK RAPOR ---\n");
                         Console.WriteLine("Buraya kod gelecek...\n");
                         Clear();
                         break;
 
-                    case 19:
+                    case 14:
                         Console.Clear();
                         Console.WriteLine("--- EN ÇOK HARCAMA YAPILAN KATEGORİ ---\n");
                         Console.WriteLine("Buraya kod gelecek...\n");
                         Clear();
                         break;
 
-                    case 20:
+                    case 15:
                         Console.Clear();
                         Console.WriteLine("Çıkış yapılıyor...\n" +
                             "Devam etmek için bir tuşa basınız.");

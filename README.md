@@ -98,6 +98,7 @@ Uygulama mantığını içerir.
 * Tarihe göre sıralama (ORDER BY DESC)
 * Decimal precision & scale ayarlama
 * Nullable Description desteği
+* İşlem eklerken ve güncellerken kullanıcı/kategori doğrulaması
 
 ---
 

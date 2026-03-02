@@ -107,7 +107,7 @@ namespace PersonalFinanceManager
                     case 8:
                         Console.Clear();
                         Console.WriteLine("--- KATEGORİ GÜNCELLE ---\n");
-                        categoryManager.ListCategory();
+                        categoryManager.UpdateCategory();
                         Clear();
                         break;
 

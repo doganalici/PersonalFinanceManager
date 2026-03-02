@@ -76,11 +76,20 @@ namespace PersonalFinanceManager.Business
                         while (read.Read())
                         {
                             hasData = true;
-                            string type = read["Type"].ToString() == "Income" ? "Gelir" : "Gider";
+                            //string type = read["Type"].ToString() == "Income" ? "Gelir" : "Gider";
+                            string typeValue = read["Type"].ToString();
+                            string typeText;
+
+                            if (typeValue == "Income")
+                                typeText = "Gelir";
+                            else if (typeValue == "Expense")
+                                typeText = "Gider";
+                            else
+                                typeText = "Bilinmiyor";
 
                             Console.WriteLine($"Id : {read["Id"]}\n" +
                                 $"Kategori Adı : {read["CategoryName"]}\n" +
-                                $"Tipi : {read["Type"]}");
+                                $"Tipi : {typeText}");
                             Console.WriteLine("*-*-*-*-*-*-*-*-*-*-*-*-*-*");
                         }
                     }
@@ -143,37 +152,49 @@ namespace PersonalFinanceManager.Business
                 Console.Write("\nListede bulunan bir Id numarası giriniz! ");
             }
 
-            Console.Write("Güncel kategori adını giriniz : ");
-            string newName = Console.ReadLine()?.Trim();
-            if (string.IsNullOrEmpty(newName))
-            {
-                Console.WriteLine("Kategori adı boş olamaz!");
-                return;
-            }
-
-            Console.WriteLine("\nGüncel kategori tipini seçiniz:");
-            Console.WriteLine("1 - Gelir");
-            Console.WriteLine("2 - Gider");
-
-            int typeOption;
-            while (!int.TryParse(Console.ReadLine(), out typeOption) || (typeOption != 1 && typeOption != 2))
-            {
-                Console.Write("Lütfen 1 veya 2 giriniz: ");
-            }
-
-            string newType = typeOption == 1 ? "Income" : "Expense";
-
             using (SqlConnection connection = db.GetConnection())
             {
-                string queryUpdate = "UPDATE Categories SET CategoryName=@newName,Type=@newType WHERE Id=@id";
-                SqlCommand command = new SqlCommand(queryUpdate, connection);
-                command.Parameters.Add("@newName", SqlDbType.VarChar, 70).Value = newName;
-                command.Parameters.Add("@newType", SqlDbType.VarChar, 50).Value = newType;
-                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                string queryCheck = "SELECT COUNT(*) FROM Categories WHERE Id=@id";
+                SqlCommand checkCommand = new SqlCommand(queryCheck, connection);
+                checkCommand.Parameters.Add("@id", SqlDbType.Int).Value = id;
 
                 try
                 {
                     connection.Open();
+                    int count = (int)checkCommand.ExecuteScalar();
+                    if (count == 0)
+                    {
+                        Console.WriteLine("\nSeçtiğiniz Id numarasına sahip kategori bulunamadı!");
+                        return;
+                    }
+
+
+                    Console.Write("Güncel kategori adını giriniz : ");
+                    string newName = Console.ReadLine()?.Trim();
+                    if (string.IsNullOrEmpty(newName))
+                    {
+                        Console.WriteLine("Kategori adı boş olamaz!");
+                        return;
+                    }
+
+                    Console.WriteLine("1 - Gelir");
+                    Console.WriteLine("2 - Gider");
+                    Console.Write("\nGüncel kategori tipini seçiniz : ");
+
+                    int typeOption;
+                    while (!int.TryParse(Console.ReadLine(), out typeOption) || (typeOption != 1 && typeOption != 2))
+                    {
+                        Console.Write("Lütfen 1 veya 2 giriniz: ");
+                    }
+
+                    string newType = typeOption == 1 ? "Income" : "Expense";
+
+                    string queryUpdate = "UPDATE Categories SET CategoryName=@newName,Type=@newType WHERE Id=@id";
+                    SqlCommand command = new SqlCommand(queryUpdate, connection);
+                    command.Parameters.Add("@newName", SqlDbType.VarChar, 70).Value = newName;
+                    command.Parameters.Add("@newType", SqlDbType.VarChar, 50).Value = newType;
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+
                     int result = command.ExecuteNonQuery();
                     if (result > 0)
                     {

@@ -142,14 +142,14 @@ namespace PersonalFinanceManager
                     case 13:
                         Console.Clear();
                         Console.WriteLine("--- AYLIK RAPOR ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        transactionManager.MonthlyReport();
                         Clear();
                         break;
 
                     case 14:
                         Console.Clear();
                         Console.WriteLine("--- EN ÇOK HARCAMA YAPILAN KATEGORİ ---\n");
-                        Console.WriteLine("Buraya kod gelecek...\n");
+                        transactionManager.MostSpentCategory();
                         Clear();
                         break;
 

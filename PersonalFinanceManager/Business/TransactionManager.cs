@@ -437,5 +437,209 @@ namespace PersonalFinanceManager.Business
                 }
             }
         }
+
+        public void MonthlyReport()
+        {
+            using (SqlConnection connection = db.GetConnection())
+            {
+                string userQuery = "SELECT Id, Name FROM Users";
+                SqlCommand userCmd = new SqlCommand(userQuery, connection);
+                connection.Open();
+                SqlDataReader userReader = userCmd.ExecuteReader();
+
+                Console.WriteLine("----- KULLANICILAR -----");
+                bool hasUser = false;
+                while (userReader.Read())
+                {
+                    hasUser = true;
+                    Console.WriteLine($"Id : {userReader["Id"]} - {userReader["Name"]}");
+                }
+                userReader.Close();
+
+                if (!hasUser)
+                {
+                    Console.WriteLine("Sistemde kullanıcı bulunmamaktadır.");
+                    return;
+                }
+
+                int userId;
+                bool validUserId = false;
+                do
+                {
+                    Console.Write("\nRapor almak istediğiniz kullanıcı Id'si : ");
+                    string input = Console.ReadLine();
+                    if (int.TryParse(input, out userId))
+                    {
+                        string checkUserQuery = "SELECT COUNT(*) FROM Transactions WHERE UserId=@userId";
+                        SqlCommand checkUserCmd = new SqlCommand(checkUserQuery, connection);
+                        checkUserCmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                        int userTransactions = (int)checkUserCmd.ExecuteScalar();
+                        if (userTransactions > 0)
+                            validUserId = true;
+                        else
+                            Console.WriteLine("Bu kullanıcıya ait herhangi bir işlem bulunmamaktadır.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Geçerli bir Id giriniz!");
+                    }
+                } while (!validUserId);
+
+
+                int month;
+                do
+                {
+                    Console.Write("Rapor için ayı giriniz (1-12) : ");
+                } while (!int.TryParse(Console.ReadLine(), out month) || month < 1 || month > 12);
+
+                int year;
+                do
+                {
+                    Console.Write("Rapor için yılı giriniz (örn: 2026): ");
+                } while (!int.TryParse(Console.ReadLine(), out year) || year < 2000 || year > 2100);
+
+
+                string query = @"SELECT 
+                            c.Type,
+                            SUM(t.Amount) AS TotalAmount
+                         FROM Transactions t
+                         INNER JOIN Categories c ON t.CategoryId = c.Id
+                         WHERE t.UserId=@userId
+                           AND MONTH(t.TransactionDate)=@month
+                           AND YEAR(t.TransactionDate)=@year
+                         GROUP BY c.Type";
+
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                command.Parameters.Add("@month", SqlDbType.Int).Value = month;
+                command.Parameters.Add("@year", SqlDbType.Int).Value = year;
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    decimal incomeTotal = 0;
+                    decimal expenseTotal = 0;
+
+                    while (reader.Read())
+                    {
+                        string type = reader["Type"].ToString();
+                        decimal amount = reader["TotalAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["TotalAmount"]);
+
+                        if (type == "Income")
+                            incomeTotal = amount;
+                        else if (type == "Expense")
+                            expenseTotal = amount;
+                    }
+
+                    Console.WriteLine("\n----- AYLIK RAPOR -----");
+                    Console.WriteLine($"Kullanıcı Id : {userId}");
+                    Console.WriteLine($"Ay / Yıl     : {month:D2}/{year}");
+                    Console.WriteLine($"Gelir Toplamı: {incomeTotal:N0} TL");
+                    Console.WriteLine($"Gider Toplamı: {expenseTotal:N0} TL");
+                    Console.WriteLine($"Bakiye       : {(incomeTotal - expenseTotal):N0} TL");
+                    Console.WriteLine("------------------------");
+                }
+            }
+        }
+
+        public void MostSpentCategory()
+        {
+            using (SqlConnection connection = db.GetConnection())
+            {
+                connection.Open();
+
+                // Kullanıcıları listele
+                string userQuery = "SELECT Id, Name FROM Users";
+                SqlCommand userCmd = new SqlCommand(userQuery, connection);
+                SqlDataReader userReader = userCmd.ExecuteReader();
+
+                Console.WriteLine("----- KULLANICILAR -----");
+                bool hasUser = false;
+                while (userReader.Read())
+                {
+                    hasUser = true;
+                    Console.WriteLine($"Id : {userReader["Id"]} - {userReader["Name"]}");
+                }
+                userReader.Close();
+
+                if (!hasUser)
+                {
+                    Console.WriteLine("Sistemde kullanıcı bulunmamaktadır.");
+                    return;
+                }
+
+                int userId;
+                while (true)
+                {
+                    Console.Write("\nRapor almak istediğiniz kullanıcı Id'si : ");
+                    string input = Console.ReadLine();
+                    if (int.TryParse(input, out userId))
+                    {
+                        string checkUserQuery = "SELECT COUNT(*) FROM Transactions WHERE UserId=@userId";
+                        SqlCommand checkUserCmd = new SqlCommand(checkUserQuery, connection);
+                        checkUserCmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                        int userTransactions = (int)checkUserCmd.ExecuteScalar();
+                        if (userTransactions > 0)
+                            break;
+                        else
+                            Console.WriteLine("Bu kullanıcıya ait herhangi bir işlem bulunmamaktadır.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Geçerli bir Id giriniz!");
+                    }
+                }
+
+                int month;
+                Console.Write("Rapor için ayı giriniz (1-12): ");
+                while (!int.TryParse(Console.ReadLine(), out month) || month < 1 || month > 12)
+                {
+                    Console.Write("Lütfen 1 ile 12 arasında geçerli bir ay giriniz : ");
+                }
+
+                int year;
+                Console.Write("Rapor için yılı giriniz (örn: 2026) : ");
+                while (!int.TryParse(Console.ReadLine(), out year) || year < 2000 || year > 2100)
+                {
+                    Console.Write("Lütfen geçerli bir yıl giriniz (2000-2100) : ");
+                }
+
+                string query = @"SELECT TOP 1 
+                            c.CategoryName,
+                            SUM(t.Amount) AS TotalAmount
+                         FROM Transactions t
+                         INNER JOIN Categories c ON t.CategoryId = c.Id
+                         WHERE t.UserId=@userId
+                           AND MONTH(t.TransactionDate)=@month
+                           AND YEAR(t.TransactionDate)=@year
+                           AND c.Type='Expense'
+                         GROUP BY c.CategoryName
+                         ORDER BY TotalAmount DESC";
+
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                command.Parameters.Add("@month", SqlDbType.Int).Value = month;
+                command.Parameters.Add("@year", SqlDbType.Int).Value = year;
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        string categoryName = reader["CategoryName"].ToString();
+                        decimal totalSpent = reader["TotalAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["TotalAmount"]);
+
+                        Console.WriteLine("\n----- EN ÇOK HARCANAN KATEGORİ -----");
+                        Console.WriteLine($"Kullanıcı Id  : {userId}");
+                        Console.WriteLine($"Ay / Yıl      : {month:D2}/{year}");
+                        Console.WriteLine($"Kategori      : {categoryName}");
+                        Console.WriteLine($"Toplam Harcama: {totalSpent:N0} TL");
+                        Console.WriteLine("------------------------");
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nSeçilen kullanıcı ve tarihe ait gider bulunamadı.");
+                    }
+                }
+            }
+        }
     }
 }

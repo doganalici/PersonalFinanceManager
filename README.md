@@ -18,6 +18,8 @@ Bu proje ile aşağıdaki konular pratiğe dökülmüştür:
 * Exception handling
 * Input validation
 * SQL Server ile bağlantı yönetimi
+* GROUP BY, ORDER BY sorguları
+* Kullanıcı bazlı raporlama
 
 ---
 
@@ -52,6 +54,7 @@ Veritabanı bağlantı işlemlerini içerir.
 
 * SQL Server bağlantı yönetimi
 * SqlConnection nesnesi üretimi
+* Using blokları ile güvenli bağlantı kapatma
 
 📂 Business Katmanı
 
@@ -59,8 +62,11 @@ Uygulama mantığını içerir.
 
 * User CRUD işlemleri
 * Category CRUD işlemleri
-* Transaction işlemleri
+* Transaction CRUD işlemleri
 * JOIN ile ilişkili veri çekme
+* Kullanıcı bazlı işlem listeleme
+* Aylık raporlama
+* En çok harcanan kategori analizi
 
 ---
 
@@ -73,7 +79,8 @@ Uygulama mantığını içerir.
 
 ✔ Parametreli sorgular kullanılmıştır<br>
 ✔ Input validation uygulanmıştır<br>
-✔ ExecuteNonQuery ile etkilenen satır kontrolü yapılmaktadır
+✔ ExecuteNonQuery ile etkilenen satır kontrolü yapılmaktadır<br>
+✔ Id doğrulama kontrolü
 
 ---
 
@@ -86,19 +93,23 @@ Uygulama mantığını içerir.
 
 ✔ Kategori adı boş olamaz kontrolü<br>
 ✔ Tip alanı için validasyon<br>
-✔ Güvenli SQL parametreleri
+✔ Güvenli SQL parametreleri<br>
+✔ Türkçe tip gösterimi (Income → Gelir, Expense → Gider)
 
 ---
 
 💰 Transaction İşlemleri
 
 * İşlem ekleme
-* INNER JOIN ile işlem listeleme
+* İşlem Listeleme (Kullanıcı bazlı)
+* İşlem Güncelleme (Seçilen kullanıcıya göre)
+* INNER JOIN ile ilişkili veri çekme
+* Tarihe göre sıralama (ORDER BY DESC)
 * Kullanıcı ve kategori adını birlikte gösterme
 * Tarihe göre sıralama (ORDER BY DESC)
-* Decimal precision & scale ayarlama
 * Nullable Description desteği
-* İşlem eklerken ve güncellerken kullanıcı/kategori doğrulaması
+* Decimal precision & scale ayarlama
+* Kullanıcı ve kategori Id doğrulama
 
 ---
 
@@ -112,6 +123,28 @@ Transactions tablosu:
 INNER JOIN Users u ON t.UserId = u.Id<br>
 INNER JOIN Categories c ON t.CategoryId = c.Id<br><br>
 kullanılarak ilişkili veriler tek sorguda çekilmektedir.
+
+---
+
+📊 Raporlama Özellikleri<br>
+📅 Aylık Rapor (Kullanıcı Bazlı)
+
+* Kullanıcı seçimi
+* Ay ve yıl seçimi
+* Gelir toplamı
+* Gider toplamı
+* Bakiye hesaplama (Gelir - Gider)
+* GROUP BY ile tip bazlı hesaplama
+
+---
+
+🥇 En Çok Harcanan Kategori (Kullanıcı + Ay Bazlı)
+
+* Kullanıcı seçimi
+* Ay ve yıl filtresi
+* Sadece gider işlemleri dikkate alınır
+* TOP 1 + ORDER BY DESC ile en yüksek harcama kategorisi
+* SUM ile toplam harcama hesaplama
 
 ---
 
